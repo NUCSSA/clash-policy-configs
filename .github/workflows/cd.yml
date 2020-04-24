@@ -11,21 +11,10 @@ jobs:
 
     steps:
 
-      - name: Copy to production server
-        uses: appleboy/scp-action@master
-        env:
-          HOST: ${{ secrets.HOST }}
-          USERNAME: ${{ secrets.USERNAME }}
-          KEY: ${{ secrets.privateKey }}
-        with:
-          source: "*"
-          target: "~/it/clash-configs/"
-          overwrite: true
-
-      - name: executing remote ssh commands using password
+      - name: do git clone && reveal secret files via ssh
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.privateKey }}
-          script: cd it/clash-configs && git secret reveal -p ${{ secrets.GPG_PASSPHRASE }}
+          script: cd it && rm -rf clash-configs && git clone https://github.com/NUCSSA/clash-policy-configs.git clash-configs && cd clash-configs && git secret reveal -p ${{ secrets.GPG_PASSPHRASE }}
